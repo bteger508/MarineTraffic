@@ -26,9 +26,3 @@ exports.query = async function (){
 
 	} finally { client.close(); }
 }
-
-exports.isNumValid = function(num) {
-    return num > 70
-}
-
-
