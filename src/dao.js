@@ -4,11 +4,12 @@ const assert = require('assert');
 // Connection URL
 const url = 'mongodb://localhost:27017';
 
+stub = false
+
 // Database Name
 const dbName = 'AISTestData';
 
-async function query(){
-
+exports.query = async function (){
 	const client = new MongoClient('mongodb://localhost:27017', {useUnifiedTopology: true});
 	
 	try {
@@ -29,3 +30,5 @@ async function query(){
 exports.isNumValid = function(num) {
     return num > 70
 }
+
+
