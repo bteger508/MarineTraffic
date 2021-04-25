@@ -1,0 +1,13 @@
+{
+  "dependencies": {
+    "gunzip-file": "^0.1.1",
+    "mongodb": "^3.6.6"
+  },
+  "devDependencies": {
+    "chai": "^4.3.4",
+    "mocha": "^8.3.2"
+  },
+  "scripts": {
+    "test": "mocha"
+  }
+}
