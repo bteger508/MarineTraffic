@@ -53,31 +53,37 @@ Contains all modules and dependencies for the project and Node.js.
    and then parse into the subfolder 'data':
 
 	~~~~~~~~~~~~~~{.bash}
-	C:\Users\Name> cd .\MarineTraffic-main\data\
+	cd .\MarineTraffic-main\data\
 	~~~~~~~~~~~~~~~~~~~
 
-3. Then, run 'install.js' in node.js to unzip the json.gz files:
+4. Use node's package manager to install gunzip-file dependancy:
+        
+        ~~~~~~~~~~~~~~{.bash}
+        npm install gunzip-file
+        ~~~~~~~~~~~~~~~~~~~~~
+
+5. Then, run 'install.js' in node.js to unzip the json.gz files:
 
 	~~~~~~~~~~~~~~{.bash}
 	node install.js
 	~~~~~~~~~~~~~~~~~~~
 	
-4. Finally, use the following mongodb scripts to create a database.
+6. Finally, use the following mongodb scripts to create a database.
 
 	~~~~~~~~~~~~~~{.bash}
-   mongoimport --drop -d AISTestData -c vessels --maintainInsertionOrder vessels.json
-   mongoimport --drop -d AISTestData -c mapviews --maintainInsertionOrder mapviews.json
-   mongoimport --drop -d AISTestData -c ports --maintainInsertionOrder ports.json
-   mongoimport --drop -d AISTestData -c aisdk_20201118 --maintainInsertionOrder aisdk_20201118_sliced_1000000.json
-   ~~~~~~~~~~~~~~~~~~~
+     mongoimport --drop -d AISTestData -c vessels --maintainInsertionOrder vessels.json
+     mongoimport --drop -d AISTestData -c mapviews --maintainInsertionOrder mapviews.json
+     mongoimport --drop -d AISTestData -c ports --maintainInsertionOrder ports.json
+     mongoimport --drop -d AISTestData -c aisdk_20201118 --maintainInsertionOrder aisdk_20201118_sliced_1000000.json
+     ~~~~~~~~~~~~~~~~~~~
    
-5. Check to see if the database is correctly installed.
+7. Check to see if the database is correctly installed.
 
 	~~~~~~~~~~~~~~{.bash}
 	mongo AISTestData
 	~~~~~~~~~~~~~~~~~~~
 
-6. Then:
+8. Then:
 
 	~~~~~~~~~~~~~~{.mongodb}
 	use AISTestData
