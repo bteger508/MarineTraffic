@@ -84,16 +84,16 @@ Contains all modules and dependencies for the project and Node.js.
 	show collections
 	~~~~~~~~~~~~~~~~~~~
 
->use AISTestData
-switched to db AISTestData
->show collections
- ----------------
+| mongodb commands          |
+|--------------------------:|
+|>use AISTestData           |
+|switched to db AISTestData |
+|>show collections          |
+
+|show collections|
+|---------------:|
 | aisdk_20201118 |
- ----------------
 | mapviews       |
- ----------------
-| ports          |
- ----------------
+| ports          | 
 | vessels        |
- ----------------
  
