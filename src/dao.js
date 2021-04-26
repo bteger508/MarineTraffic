@@ -9,6 +9,8 @@ stub = false
 // Database Name
 const dbName = 'AISTestData';
 
+
+// A dummy query for reference
 exports.query = async function (){
 	const client = new MongoClient('mongodb://localhost:27017', {useUnifiedTopology: true});
 	
@@ -25,4 +27,20 @@ exports.query = async function (){
     return docs[0].Name
 
 	} finally { client.close(); }
+}
+
+// Insert an array of json AIS documents into the mongo database
+exports.insert = async function(data){
+	const client = new MongoClient('mongodb://localhost:27017', {useUnifiedTopology: true});
+	
+	try {
+	    await client.connect();
+	    const ais_messages = client.db(dbName).collection('ais_messages')
+	    let out = await ais_messages.insertMany(data, {forceServerObjectId: true})
+	    
+	    // Respond with a count of successful insertions
+	    return { "Inserted": out.insertedCount};
+	} finally {
+	    await client.close()
+	}
 }
