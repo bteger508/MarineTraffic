@@ -79,10 +79,8 @@ Contains all modules and dependencies for the project and Node.js.
    
 7. Check to see if the database is correctly installed.
 
-	~~~~~~~~~~~~~~{.bash}
-	mongo AISTestData
-	~~~~~~~~~~~~~~~~~~~
-
+     mongo AISTestData
+	
 8. Then:
 
 	~~~~~~~~~~~~~~{.mongodb}
