@@ -23,3 +23,7 @@ gunzip('ports.json.gz', 'ports.json', () => {
 gunzip('vessels.json.gz', 'vessels.json', () => {
   console.log('vessels.json done!')
 })
+
+gunzip('sample_input.json.gz', 'sample_input.json', () => {
+  console.log('sample_input.json done!')
+})
