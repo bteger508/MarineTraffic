@@ -58,9 +58,9 @@ Contains all modules and dependencies for the project and Node.js.
 
 4. Use node's package manager to install gunzip-file dependancy:
         
-        ~~~~~~~~~~~~~~{.bash}
-        npm install gunzip-file
-        ~~~~~~~~~~~~~~~~~~~~~
+	~~~~~~~~~~~~~~{.bash}
+	node install gunzip-file
+	~~~~~~~~~~~~~~~~~~~
 
 5. Then, run 'install.js' in node.js to unzip the json.gz files:
 
