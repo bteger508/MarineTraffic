@@ -39,7 +39,6 @@ describe('read_postition returns a position doc in the correct format', () => {
     it('', async () => {
         var MMSI = 265177000
         const position_report = await dao.read_position(MMSI)
-        console.log(position_report)
         assert.property(position_report, "MMSI")
         assert.property(position_report, "Lat")
         assert.property(position_report, "Long")

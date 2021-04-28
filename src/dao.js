@@ -44,16 +44,23 @@ exports.read_position = async function(mmsi, stub = false){
 	                    {$project: {_id:0, MMSI:1, "Position.coordinates": 1}},
 	                    {$sort: {Timestamp: -1}},
 	                    {$limit: 1}]).toArray()
-	                    
-	    let imo = await ais_messages.aggregate([{$match: {IMO: {$gte: 0}, MMSI: mmsi}}, {$project: {_id:0, IMO:1}}, {$sort: {Timestamp: -1}}, {$limit:1}]).toArray()
+	    position = position[0]
 	    
-         if (imo.length === 0) {
-            console.log("checking vessel collection for a matching IMO")
+        // Try to get the imo matching the MMSI from the most recent AIS message
+	    let imo = await ais_messages.aggregate([{$match: {IMO: {$gte: 0}, MMSI: mmsi}}, 
+	                    {$project: {_id:0, IMO:1}}, 
+	                    {$sort: {Timestamp: -1}},
+	                     {$limit:1}]).toArray()
+	    imo = imo[0]
+	    
+	    // If none of the AIS messages have an IMO that matches the MMSI, query the vessels collection
+         if (imo === undefined) {
             const vessels = client.db(dbName).collection('vessels')
             imo = await vessels.aggregate([{$match: {IMO: {$gte: 0}, MMSI: mmsi}}, {$project: {_id:0, IMO:1}}, {$limit:1}]).toArray()
+            imo = imo[0]
          }
         
-	    return {"MMSI": position[0].MMSI, 'Lat': position[0].Position.coordinates[0], 'Long': position[0].Position.coordinates[0], 'IMO': imo[0].IMO}
+	    return {"MMSI": position.MMSI, 'Lat': position.Position.coordinates, 'Long': position.Position.coordinates, 'IMO': imo.IMO}
 	} finally {
 	    client.close()
 	}
