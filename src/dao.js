@@ -65,3 +65,30 @@ exports.read_position = async function(mmsi, stub = false){
 	    client.close()
 	}
 }
+
+
+// Delete AIS Messages that are older than 5 minutes
+exports.delete_messages = async function(){
+	const client = new MongoClient('mongodb://localhost:27017', {useUnifiedTopology: true});
+	
+	// Creating todays date in JSON format
+	var today = new Date();
+	var date = '"'+today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+	var oldTime = 'T'+today.getHours() + ":" + (today.getMinutes()-5) 
+		+ ":" + today.getSeconds() + '.' + today.getMilliseconds() + '"';
+		
+	var five_minutes_old = date + oldTime;
+	 
+	// Deleting the old timestamps
+	try {
+	    await client.connect();
+	    const ais_messages = client.db(dbName).collection('ais_messages')
+		
+	    var deletion = await ais_messages.deleteMany({"Timestamp" : {"$lt" : Date(five_minutes_old)}});
+	    
+	    // Respond with a count of successful deletions
+	    return deletion;
+	} finally {
+	    await client.close()
+	}
+}
