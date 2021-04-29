@@ -11,6 +11,8 @@ const dbName = 'AISTestData';
 // Insert an array of json AIS documents into the mongo database
 exports.insert = async function(data, stub = false){
     
+    for (doc in data) {
+    }
     // If function is called in stub mode, return the array of JSON AIS docs passed as an argument
     if (stub) { return data }
     
@@ -50,7 +52,7 @@ exports.read_position = async function(mmsi, stub = false){
 	    let imo = await ais_messages.aggregate([{$match: {IMO: {$gte: 0}, MMSI: mmsi}}, 
 	                    {$project: {_id:0, IMO:1}}, 
 	                    {$sort: {Timestamp: -1}},
-	                     {$limit:1}]).toArray()
+	                    {$limit:1}]).toArray()
 	    imo = imo[0]
 	    
 	    // If none of the AIS messages have an IMO that matches the MMSI, query the vessels collection

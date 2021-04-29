@@ -3,6 +3,7 @@ const assert = chai.assert
 const dao = require('../src/dao')
 const sample_input = require('../data/sample_input.json')
 
+
 /*
 *  Unit Tests
 */
@@ -15,6 +16,7 @@ describe('insert() is called with an array of JSON AIS documents', () => {
     })
 });
 
+
 // Unit test for insert() method using sample AIS json docs
 describe('insert() 500 sample AIS JSON docs into the mongo DB', () => {
     it('', async () => {
@@ -24,7 +26,7 @@ describe('insert() 500 sample AIS JSON docs into the mongo DB', () => {
 });
 
 // read_position() is called with proper parameter
-describe('read_postition() is called with a 9 digit integer MMSI', () => {
+describe('read_postition is called with a 9 digit integer MMSI', () => {
     it('', async () => {
         var MMSI = 265177000
         const parameter = await dao.read_position(MMSI, true)
@@ -32,8 +34,8 @@ describe('read_postition() is called with a 9 digit integer MMSI', () => {
     })
 });
 
-// read_position() returns a position document in the correct format
-describe('read_postition() returns a position doc in the correct format', () => {
+// read_position returns a position document in the correct format
+describe('read_postition returns a position doc in the correct format', () => {
     it('', async () => {
         var MMSI = 265177000
         const position_report = await dao.read_position(MMSI)
@@ -41,6 +43,15 @@ describe('read_postition() returns a position doc in the correct format', () => 
         assert.property(position_report, "Lat")
         assert.property(position_report, "Long")
         assert.property(position_report, "IMO")
+    })
+});
+
+// read_position() is called with proper parameter
+describe('read_postition is called with a 9 digit integer MMSI', () => {
+    it('', async () => {
+        var MMSI = 265177000
+        const parameter = await dao.read_position(MMSI, true)
+        assert.strictEqual(parameter, MMSI)
     })
 });
 
