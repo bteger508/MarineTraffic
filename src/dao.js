@@ -92,3 +92,50 @@ exports.delete_messages = async function(stub = false){
 	    await client.close()
 	}
 }
+
+
+// Retrieve permanent vessel information for a given MMSI
+exports.permanent_data = async function(mmsi, stub = false){
+	const client = new MongoClient('mongodb://localhost:27017', {useUnifiedTopology: true});
+	
+	// If function is called in stub mode, return the MMSI passed as an argument
+	if (stub) { return mmsi }
+	
+	// Else, execute the query
+	try {
+	    await client.connect();
+		
+		const vessels = client.db(dbName).collection('vessels')
+	    const query = {"MMSI" : mmsi};
+		const project = {projection: {_id:0}};
+		
+		const permanent_data = await vessels.findOne(query,project);
+		
+	    return permanent_data;
+	} finally {
+	    client.close()
+	}
+}
+
+// Retrieve transient vessel information for a given MMSI
+exports.transient_data = async function(mmsi, stub = false){
+	const client = new MongoClient('mongodb://localhost:27017', {useUnifiedTopology: true});
+	
+	// If function is called in stub mode, return the MMSI passed as an argument
+	if (stub) { return mmsi }
+	
+	// Else, execute the query
+	try {
+	    await client.connect();
+		
+	    const aisdk_20201118 = client.db(dbName).collection('aisdk_20201118')
+		const query = {"MMSI": mmsi};
+		const project = {projection: {_id:0}};
+		
+	    const temp_data = await aisdk_20201118.findOne(query,project);
+	    		
+	    return temp_data;
+	} finally {
+	    client.close()
+	}
+}
