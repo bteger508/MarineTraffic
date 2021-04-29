@@ -24,7 +24,7 @@ describe('insert() 500 sample AIS JSON docs into the mongo DB', () => {
 });
 
 // read_position() is called with proper parameter
-describe('read_postition is called with a 9 digit integer MMSI', () => {
+describe('read_postition() is called with a 9 digit integer MMSI', () => {
     it('', async () => {
         var MMSI = 265177000
         const parameter = await dao.read_position(MMSI, true)
@@ -32,8 +32,8 @@ describe('read_postition is called with a 9 digit integer MMSI', () => {
     })
 });
 
-// read_position returns a position document in the correct format
-describe('read_postition returns a position doc in the correct format', () => {
+// read_position() returns a position document in the correct format
+describe('read_postition() returns a position doc in the correct format', () => {
     it('', async () => {
         var MMSI = 265177000
         const position_report = await dao.read_position(MMSI)
@@ -45,10 +45,46 @@ describe('read_postition returns a position doc in the correct format', () => {
 });
 
 // Unit test for delete_messages() method using sample AIS json docs
-describe('delete_messages deletes 500 AIS messages older than 5 minutes', () => {
+describe('delete_messages() deletes 500 AIS messages older than 5 minutes', () => {
     it('', async () => {
         const response = await dao.delete_messages();
         assert.isObject( response );
 		assert.deepEqual( 'Deleted '+response.deletedCount+' item(s).', 'Deleted 500 item(s).');
+    })
+});
+
+// permanent_data() is called with proper parameter
+describe('permanent_data() is called with a 9 digit integer MMSI', () => {
+    it('', async () => {
+        var MMSI = 210169000
+        const parameter = await dao.permanent_data(MMSI, true)
+        assert.strictEqual(parameter, MMSI)
+    })
+});
+
+// permanent_data() returns a vessel document in the correct format
+describe('permanent_data() returns a vessel doc in the correct format', () => {
+    it('', async () => {
+        var MMSI = 210169000
+        const data = await dao.permanent_data(MMSI)
+        assert.deepEqual(data.MMSI, MMSI);
+    })
+});
+
+// transient_data() is called with proper parameter
+describe('transient_data() is called with a 9 digit integer MMSI', () => {
+    it('', async () => {
+        var MMSI = 210169000
+        const parameter = await dao.transient_data(MMSI, true)
+        assert.strictEqual(parameter, MMSI)
+    })
+});
+
+// transient_data() returns a vessel document in the correct format
+describe('transient_data() returns a vessel doc in the correct format', () => {
+    it('', async () => {
+        var MMSI = 210169000
+        const data = await dao.transient_data(MMSI)
+        assert.deepEqual(data.MMSI, MMSI);
     })
 });
