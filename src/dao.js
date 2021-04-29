@@ -21,10 +21,15 @@ exports.insert = async function(data, stub = false){
 	try {
 	    await client.connect();
 	    const ais_messages = client.db(dbName).collection('ais_messages')
-	    let out = await ais_messages.insertMany(data, {forceServerObjectId: true})
+	    if (Array.isArray(data)) {
+	        var out = await ais_messages.insertMany(data, {forceServerObjectId: true})
+	    } else {
+	        var out = await ais_messages.insertOne(data, {forceServerObjectId: true})
+	    }
 	    
 	    // Respond with a count of successful insertions
 	    return { "Inserted": out.insertedCount};
+	    
 	} finally {
 	    await client.close()
 	}

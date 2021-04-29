@@ -8,11 +8,33 @@ const sample_input = require('../data/sample_input.json')
 *  Unit Tests
 */
 
-// insert() is called with proper parameters
-describe('insert() is called with an array of JSON AIS documents', () => {
+/*
+* insert() is called either with an array or a single ais json doc
+*/ 
+// insert() can be called with an array of json ais docs
+describe('insert() called with an array of JSON AIS documents', () => {
     it('', async () => {
         const parameter = await dao.insert(sample_input, true)
         assert.deepEqual(parameter, sample_input)
+    })
+});
+
+// insert() can be called with a single JSON AIS doc
+describe('insert() called with a single JSON AIS doc', () => {
+    it('', async () => {
+        const parameter = await dao.insert({"Timestamp":"2020-11-18T00:00:00.000Z",
+                                                    "Class":"Class A","MMSI":304858000,
+                                                    "MsgType":"position_report",
+                                                    "Position": {"type":"Point","coordinates":[55.218332,13.371672]},
+                                                    "Status":"Under way using engine","SoG":10.8,
+                                                    "CoG":94.3,"Heading":97}, true)
+                                                    
+        assert.deepEqual(parameter, {"Timestamp":"2020-11-18T00:00:00.000Z",
+                                            "Class":"Class A","MMSI":304858000,
+                                            "MsgType":"position_report",
+                                            "Position": {"type":"Point","coordinates":[55.218332,13.371672]},
+                                            "Status":"Under way using engine","SoG":10.8,
+                                            "CoG":94.3,"Heading":97})
     })
 });
 
@@ -25,8 +47,24 @@ describe('insert() 500 sample AIS JSON docs into the mongo DB', () => {
     })
 });
 
+
+// Unit test for insert() method using a single json AIS doc
+describe('insert() 1 sample AIS JSON docs into the mongo DB', () => {
+    it('', async () => {
+        const response = await dao.insert({"Timestamp":"2020-11-18T00:00:00.000Z",
+                                                    "Class":"Class A","MMSI":304858000,
+                                                    "MsgType":"position_report",
+                                                    "Position": {"type":"Point","coordinates":[55.218332,13.371672]},
+                                                    "Status":"Under way using engine","SoG":10.8,
+                                                    "CoG":94.3,"Heading":97})
+        assert.deepEqual(response, {"Inserted": 1});
+    })
+});
+
+
+
 // read_position() is called with proper parameter
-describe('read_postition() is called with a 9 digit integer MMSI', () => {
+describe('read_postition is called with a 9 digit integer MMSI', () => {
     it('', async () => {
         var MMSI = 265177000
         const parameter = await dao.read_position(MMSI, true)
@@ -35,7 +73,7 @@ describe('read_postition() is called with a 9 digit integer MMSI', () => {
 });
 
 // read_position returns a position document in the correct format
-describe('read_postition() returns a position doc in the correct format', () => {
+describe('read_postition returns a position doc in the correct format', () => {
     it('', async () => {
         var MMSI = 265177000
         const position_report = await dao.read_position(MMSI)
@@ -46,14 +84,18 @@ describe('read_postition() returns a position doc in the correct format', () => 
     })
 });
 
+
+
 // Unit test for delete_messages() method using sample AIS json docs
-describe('delete_messages() deletes 500 AIS messages older than 5 minutes', () => {
+describe('delete_messages() deletes 501 AIS messages older than 5 minutes', () => {
     it('', async () => {
         const response = await dao.delete_messages();
         assert.isObject( response );
-		assert.deepEqual( 'Deleted '+response.deletedCount+' item(s).', 'Deleted 500 item(s).');
+		assert.deepEqual( 'Deleted '+response.deletedCount+' item(s).', 'Deleted 501 item(s).');
     })
 });
+
+
 
 // permanent_data() is called with proper parameter
 describe('permanent_data() is called with a 9 digit integer MMSI', () => {
@@ -72,6 +114,8 @@ describe('permanent_data() returns a vessel doc in the correct format', () => {
         assert.deepEqual(data.MMSI, MMSI);
     })
 });
+
+
 
 // transient_data() is called with proper parameter
 describe('transient_data() is called with a 9 digit integer MMSI', () => {
