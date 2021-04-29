@@ -3,7 +3,6 @@ const assert = chai.assert
 const dao = require('../src/dao')
 const sample_input = require('../data/sample_input.json')
 
-
 /*
 *  Unit Tests
 */
@@ -15,7 +14,6 @@ describe('insert() is called with an array of JSON AIS documents', () => {
         assert.deepEqual(parameter, sample_input)
     })
 });
-
 
 // Unit test for insert() method using sample AIS json docs
 describe('insert() 500 sample AIS JSON docs into the mongo DB', () => {
@@ -43,5 +41,14 @@ describe('read_postition returns a position doc in the correct format', () => {
         assert.property(position_report, "Lat")
         assert.property(position_report, "Long")
         assert.property(position_report, "IMO")
+    })
+});
+
+// Unit test for delete_messages() method using sample AIS json docs
+describe('delete_messages deletes 500 AIS messages older than 5 minutes', () => {
+    it('', async () => {
+        const response = await dao.delete_messages();
+        assert.isObject( response );
+		assert.deepEqual( 'Deleted '+response.deletedCount+' item(s).', 'Deleted 500 item(s).');
     })
 });
