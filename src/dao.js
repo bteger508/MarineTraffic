@@ -68,7 +68,7 @@ exports.read_position = async function(mmsi, stub = false){
 
 
 // Delete AIS Messages that are older than 5 minutes
-exports.delete_messages = async function(){
+exports.delete_messages = async function(stub = false){
 	const client = new MongoClient('mongodb://localhost:27017', {useUnifiedTopology: true});
 	
 	// Creating todays date in JSON format
