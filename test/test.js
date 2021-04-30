@@ -149,7 +149,7 @@ describe('read_shipPositions() returns an array of ship position documents', () 
     it('', async () => {
         var timestamp = "2020-11-18T00:00:00Z"
         const array = await dao.read_shipPositions(timestamp)
-        assert.deepEqual(array, 125);
+        assert.deepEqual(array, 116);
     })
 });
 
