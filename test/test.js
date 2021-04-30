@@ -168,6 +168,7 @@ describe('read_PortName() returns an array of port documents in the correct form
         var portname = "Frederikshavn"
         const array = await dao.read_PortName(portname)
         assert.deepEqual(array, [{ "id" : "1221", "un/locode" : "DKFDH", "port_location" : "Frederikshavn", 
-		"country" : "Denmark", "longitude" : "10.546111", "latitude" : "57.437778", "website" : "www.frederikshavnhavn.dk"}]);
+		"country" : "Denmark", "longitude" : "10.546111", "latitude" : "57.437778", "website" : "www.frederikshavnhavn.dk", 
+		"mapview_1" : 1, "mapview_2" : 5335, "mapview_3" : 53352}]);
     })
 });
