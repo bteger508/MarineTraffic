@@ -182,7 +182,7 @@ exports.read_PortName = async function(portname, stub = false){
 	    await client.connect();
 	    const ports = client.db(dbName).collection('ports')
 		var port_docs = await ports.find({"port_location":portname})
-		.project({"_id":0,"mapview_1":0,"mapview_2":0,"mapview_3":0})
+		.project({"_id":0})
 		.toArray();
 		
 		return port_docs;
