@@ -149,7 +149,7 @@ exports.transient_data = async function(mmsi, stub = false){
 
 
 // Read all most recent ship positions
-exports.read_shipPositions = async function(timestamp, stub = false){
+exports.read_ShipPositions = async function(timestamp, stub = false){
 	const client = new MongoClient('mongodb://localhost:27017', {useUnifiedTopology: true});
 	
 	// If function is called in stub mode, return the timestamp passed as an argument
@@ -186,6 +186,33 @@ exports.read_PortName = async function(portname, stub = false){
 		.toArray();
 		
 		return port_docs;
+	} finally {
+	    client.close()
+	}
+}
+
+// Read last 5 positions of a given MMSI
+exports.read_LastFivePositions = async function(mmsi, stub = false){
+	const client = new MongoClient('mongodb://localhost:27017', {useUnifiedTopology: true});
+	
+	// If function is called in stub mode, return the MMSI passed as an argument
+	if (stub) { return mmsi }
+	
+	// Else, execute the query
+	try {
+	    await client.connect();
+		const aisdk_20201118 = client.db(dbName).collection('aisdk_20201118')
+		
+		let five_positions = await aisdk_20201118.find({"MMSI":mmsi,"MsgType":"position_report"})
+			.project({_id:0,"Timestamp":0,"Class":0,"MsgType":0})
+			.sort({"_id":-1})
+			.limit(5)
+			.toArray();
+		
+		let object = await Object.assign({},five_positions);
+		var objectSize = Object.keys(object).length;
+		
+	    return objectSize;
 	} finally {
 	    client.close()
 	}
