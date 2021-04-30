@@ -146,3 +146,47 @@ exports.transient_data = async function(mmsi, stub = false){
 	    client.close()
 	}
 }
+
+
+// Read all most recent ship positions
+exports.read_shipPositions = async function(timestamp, stub = false){
+	const client = new MongoClient('mongodb://localhost:27017', {useUnifiedTopology: true});
+	
+	// If function is called in stub mode, return the timestamp passed as an argument
+	if (stub) { return timestamp }
+	
+	// Else, execute the query
+	try {
+	    await client.connect();
+	    const aisdk_20201118 = client.db(dbName).collection('aisdk_20201118')
+		var ship_positions = await aisdk_20201118.find({"Timestamp":new Date(timestamp)})
+		.project({"_id":0,"A":0,"B":0,"C":0,"D":0})
+		.toArray();
+		
+		return ship_positions.length;
+	} finally {
+	    client.close()
+	}
+}
+
+
+// Read all ports matching the given name and optional country
+exports.read_PortName = async function(portname, stub = false){
+	const client = new MongoClient('mongodb://localhost:27017', {useUnifiedTopology: true});
+	
+	// If function is called in stub mode, return the portname passed as an argument
+	if (stub) { return portname }
+	
+	// Else, execute the query
+	try {
+	    await client.connect();
+	    const ports = client.db(dbName).collection('ports')
+		var port_docs = await ports.find({"port_location":portname})
+		.project({"_id":0,"mapview_1":0,"mapview_2":0,"mapview_3":0})
+		.toArray();
+		
+		return port_docs;
+	} finally {
+	    client.close()
+	}
+}
