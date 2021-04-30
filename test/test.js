@@ -134,3 +134,40 @@ describe('transient_data() returns a vessel doc in the correct format', () => {
         assert.deepEqual(data.MMSI, MMSI);
     })
 });
+
+// read_shipPositions() is called with proper parameter
+describe('read_shipPositions() is called with a string port name', () => {
+    it('', async () => {
+        var timestamp = "2020-11-18T00:00:00Z"
+        const parameter = await dao.read_shipPositions(timestamp, true)
+        assert.strictEqual(parameter, timestamp)
+    })
+});
+
+// read_shipPositions() returns an array of ship position documents
+describe('read_shipPositions() returns an array of ship position documents', () => {
+    it('', async () => {
+        var timestamp = "2020-11-18T00:00:00Z"
+        const array = await dao.read_shipPositions(timestamp)
+        assert.deepEqual(array, 125);
+    })
+});
+
+// read_PortName() is called with proper parameter
+describe('read_PortName() is called with a string port name', () => {
+    it('', async () => {
+        var portname = "Frederikshavn"
+        const parameter = await dao.read_PortName(portname, true)
+        assert.strictEqual(parameter, portname)
+    })
+});
+
+// read_PortName() returns an array of port documents in the correct format
+describe('read_PortName() returns an array of port documents in the correct format', () => {
+    it('', async () => {
+        var portname = "Frederikshavn"
+        const array = await dao.read_PortName(portname)
+        assert.deepEqual(array, [{ "id" : "1221", "un/locode" : "DKFDH", "port_location" : "Frederikshavn", 
+		"country" : "Denmark", "longitude" : "10.546111", "latitude" : "57.437778", "website" : "www.frederikshavnhavn.dk"}]);
+    })
+});
