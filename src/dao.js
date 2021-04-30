@@ -159,8 +159,8 @@ exports.read_shipPositions = async function(timestamp, stub = false){
 	try {
 	    await client.connect();
 	    const aisdk_20201118 = client.db(dbName).collection('aisdk_20201118')
-		var ship_positions = await aisdk_20201118.find({"Timestamp":new Date(timestamp)})
-		.project({"_id":0,"A":0,"B":0,"C":0,"D":0})
+		var ship_positions = await aisdk_20201118.find({"Timestamp":new Date(timestamp),"MsgType":"position_report"})
+		.project({"MMSI":1,"Position":{"coordinates":1},"IMO":1,"Name":1,_id:0})
 		.toArray();
 		
 		return ship_positions.length;
