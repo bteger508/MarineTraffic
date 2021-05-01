@@ -124,6 +124,7 @@ exports.permanent_data = async function(mmsi, stub = false){
 	}
 }
 
+
 // Retrieve transient vessel information for a given MMSI
 exports.transient_data = async function(mmsi, stub = false){
 	const client = new MongoClient('mongodb://localhost:27017', {useUnifiedTopology: true});
@@ -191,6 +192,7 @@ exports.read_PortName = async function(portname, stub = false){
 	}
 }
 
+
 // Read last 5 positions of a given MMSI
 exports.read_LastFivePositions = async function(mmsi, stub = false){
 	const client = new MongoClient('mongodb://localhost:27017', {useUnifiedTopology: true});
@@ -213,6 +215,30 @@ exports.read_LastFivePositions = async function(mmsi, stub = false){
 		var objectSize = Object.keys(object).length;
 		
 	    return objectSize;
+	} finally {
+	    client.close()
+	}
+}
+
+// Read most recent position of ships headed to port with given Port Id
+exports.read_PositionWithPortID = async function(portID, stub = false){
+	const client = new MongoClient('mongodb://localhost:27017', {useUnifiedTopology: true});
+	var portID = portID.toUpperCase();
+	
+	// If function is called in stub mode, return the portID passed as an argument
+	if (stub) { return portID }
+	
+	// Else, execute the query
+	try {
+	    await client.connect();
+		const aisdk_20201118 = client.db(dbName).collection('aisdk_20201118')
+		var position = await aisdk_20201118.find({"Destination":portID,"MsgType":"static_data"})
+			.project({"_id":0,"Timestamp":0,"Class":0,"MsgType":0,"A":0,"B":0,"C":0,"D":0})
+			.sort({"_id":-1})
+			.limit(5)
+			.toArray();
+		
+		return position.length;
 	} finally {
 	    client.close()
 	}
