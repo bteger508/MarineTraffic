@@ -192,9 +192,9 @@ describe('read_LastFivePositions() returns the last five vessel position documen
 });
 
 // read_PositionWithPortID() is called with proper parameter
-describe('read_PositionWithPortID() is called with an ALL uppercase portID', () => {
+describe('read_PositionWithPortID() is called with a string portID', () => {
     it('', async () => {
-        var portID = "ASSENS"
+        var portID = "2966"
         const parameter = await dao.read_PositionWithPortID(portID, true)
         assert.strictEqual(parameter, portID)
     })
@@ -203,7 +203,7 @@ describe('read_PositionWithPortID() is called with an ALL uppercase portID', () 
 // read_PositionWithPortID() returns the last five vessel positions headed to a given port
 describe('read_PositionWithPortID() returns the last five vessel positions headed to a given port', () => {
     it('', async () => {
-        var portID = "Assens"
+        var portID = "2966"
         const data = await dao.read_PositionWithPortID(portID)
 		assert.deepEqual("Documents returned: "+data, "Documents returned: "+5);
     })
