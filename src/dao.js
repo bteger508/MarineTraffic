@@ -264,3 +264,56 @@ exports.read_PositionWithPortID = async function(portID, stub = false){
 	    client.close()
 	}
 }
+
+
+// Read most recent positions of ships headed to given port (as read from static data, or user input)
+ exports.read_PositionWithPortName = async function (portName, Country){
+	const client = new MongoClient('mongodb://localhost:27017', {useUnifiedTopology: true});
+	try {
+		await client.connect();
+	
+		// Port name only
+		if ( (portName != null && Country == null) || (portName != null && Country != null) ) { 
+				
+			const aisdk_20201118 = client.db(dbName).collection('aisdk_20201118')
+			var portNameUPPER = portName.toUpperCase();
+				
+			// Creates the vessel MMSI in var static_mmsiInt
+			var static_data = await aisdk_20201118.find({"Destination":portNameUPPER,"MsgType":"static_data"})
+				.project({"_id":0,"MMSI":1})
+				.sort({"_id":-1})
+				.limit(1)
+				.toArray();
+			var static_mmsiArray = new Array();
+			for (x of static_data){static_mmsiArray.push(x.MMSI)};
+			var static_mmsiInt = parseInt(static_mmsiArray.toString());
+				
+			// Creates the vessel position array in var position
+			var position = await aisdk_20201118.find({"MMSI":static_mmsiInt,"MsgType":"position_report"})
+				.project({"_id":0,"MMSI":1,"Position":{"coordinates":1},"Status":1,"RoT":1,"SoG":1,"CoG":1,"Heading":1})
+				.sort({"_id":-1})
+				.limit(5)
+				.toArray();
+			
+			return position.length;
+	
+		// Country name only
+		} else if (Country != null && portName == null){
+		
+			const ports = client.db(dbName).collection('ports')
+			var portArray = await ports.find({"country":Country})
+				.project({"_id":0})
+				.toArray();
+			
+			return portArray.length;
+		
+		// No names passed
+		} else {
+			return "Neither a port name or country was selected.";
+		}
+
+	} finally {
+		await client.close()
+	}
+	
+}
