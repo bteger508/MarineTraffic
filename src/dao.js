@@ -216,5 +216,175 @@ exports.transient_data = async function(mmsi, stub = false){
 	}
 }
 
+
+
+// Read all most recent ship positions
+exports.read_ShipPositions = async function(timestamp, stub = false){
+	const client = new MongoClient('mongodb://localhost:27017', {useUnifiedTopology: true});
+
+	// If function is called in stub mode, return the timestamp passed as an argument
+	if (stub) { return timestamp }
+
+	// Else, execute the query
+	try {
+	    await client.connect();
+	    const aisdk_20201118 = client.db(dbName).collection('aisdk_20201118')
+		var ship_positions = await aisdk_20201118.find({"Timestamp":new Date(timestamp),"MsgType":"position_report"})
+		.project({"MMSI":1,"Position":{"coordinates":1},"IMO":1,"Name":1,_id:0})
+		.toArray();
+
+		return ship_positions.length;
+	} finally {
+	    client.close()
+	}
+}
+
+
+// Read all ports matching the given name and optional country
+exports.read_PortName = async function(portname, stub = false){
+	const client = new MongoClient('mongodb://localhost:27017', {useUnifiedTopology: true});
+
+	// If function is called in stub mode, return the portname passed as an argument
+	if (stub) { return portname }
+
+	// Else, execute the query
+	try {
+	    await client.connect();
+	    const ports = client.db(dbName).collection('ports')
+		var port_docs = await ports.find({"port_location":portname})
+		.project({"_id":0})
+		.toArray();
+
+		return port_docs;
+	} finally {
+	    client.close()
+	}
+}
+
+
+// Read last 5 positions of a given MMSI
+exports.read_LastFivePositions = async function(mmsi, stub = false){
+	const client = new MongoClient('mongodb://localhost:27017', {useUnifiedTopology: true});
+
+	// If function is called in stub mode, return the MMSI passed as an argument
+	if (stub) { return mmsi }
+
+	// Else, execute the query
+	try {
+	    await client.connect();
+		const aisdk_20201118 = client.db(dbName).collection('aisdk_20201118')
+
+		let five_positions = await aisdk_20201118.find({"MMSI":mmsi,"MsgType":"position_report"})
+			.project({_id:0,"Timestamp":0,"Class":0,"MsgType":0})
+			.sort({"_id":-1})
+			.limit(5)
+			.toArray();
+
+		let object = await Object.assign({},five_positions);
+		var objectSize = Object.keys(object).length;
+
+	    return objectSize;
+	} finally {
+	    client.close()
+	}
+}
+
+
+// Read most recent position of ships headed to port with given Port Id
+exports.read_PositionWithPortID = async function(portID, stub = false){
+	const client = new MongoClient('mongodb://localhost:27017', {useUnifiedTopology: true});
+
+	// If function is called in stub mode, return the portID passed as an argument
+	if (stub) { return portID }
+
+	// Else, execute the query
+	try {
+	    await client.connect();
+
+		// Creates the destination in var port_nameString()
+		const ports = client.db(dbName).collection('ports')
+		var port = await ports.find({"id":portID})
+			.project({"_id":0,"port_location":1})
+			.toArray();
+		var port_nameArray = new Array();
+		for (x of port){port_nameArray.push(x.port_location)};
+		var port_nameString = port_nameArray.toString().toUpperCase();
+
+		// Creates the vessel MMSI in var static_mmsiInt
+		const aisdk_20201118 = client.db(dbName).collection('aisdk_20201118')
+		var static_data = await aisdk_20201118.find({"Destination":port_nameString,"MsgType":"static_data"})
+			.project({"_id":0,"MMSI":1})
+			.sort({"_id":-1})
+			.limit(1)
+			.toArray();
+		var static_mmsiArray = new Array();
+		for (x of static_data){static_mmsiArray.push(x.MMSI)};
+		var static_mmsiInt = parseInt(static_mmsiArray.toString());
+
+		// Creates the vessel position array in var position
+		var position = await aisdk_20201118.find({"MMSI":static_mmsiInt,"MsgType":"position_report"})
+			.project({"_id":0,"MMSI":1,"Position":{"coordinates":1},"Status":1,"RoT":1,"SoG":1,"CoG":1,"Heading":1})
+			.sort({"_id":-1})
+			.limit(5)
+			.toArray();
+
+		return position.length;
+	} finally {
+	    client.close()
+	}
+}
+
+
+// Read most recent positions of ships headed to given port (as read from static data, or user input)
+ exports.read_PositionWithPortName = async function (portName, Country){
+	const client = new MongoClient('mongodb://localhost:27017', {useUnifiedTopology: true});
+	try {
+		await client.connect();
+
+		// Port name only
+		if ( (portName != null && Country == null) || (portName != null && Country != null) ) { 
+
+			const aisdk_20201118 = client.db(dbName).collection('aisdk_20201118')
+			var portNameUPPER = portName.toUpperCase();
+
+			// Creates the vessel MMSI in var static_mmsiInt
+			var static_data = await aisdk_20201118.find({"Destination":portNameUPPER,"MsgType":"static_data"})
+				.project({"_id":0,"MMSI":1})
+				.sort({"_id":-1})
+				.limit(1)
+				.toArray();
+			var static_mmsiArray = new Array();
+			for (x of static_data){static_mmsiArray.push(x.MMSI)};
+			var static_mmsiInt = parseInt(static_mmsiArray.toString());
+
+			// Creates the vessel position array in var position
+			var position = await aisdk_20201118.find({"MMSI":static_mmsiInt,"MsgType":"position_report"})
+				.project({"_id":0,"MMSI":1,"Position":{"coordinates":1},"Status":1,"RoT":1,"SoG":1,"CoG":1,"Heading":1})
+				.sort({"_id":-1})
+				.limit(5)
+				.toArray();
+
+			return position.length;
+
+		// Country name only
+		} else if (Country != null && portName == null){
+
+			const ports = client.db(dbName).collection('ports')
+			var portArray = await ports.find({"country":Country})
+				.project({"_id":0})
+				.toArray();
+
+			return portArray.length;
+
+		// No names passed
+		} else {
+			return "Neither a port name or country was selected.";
+		}
+
+	} finally {
+		await client.close()
+	}
+}
+
 exports.get_mapviews = get_mapviews
 exports.isOutOfBounds = isOutOfBounds
