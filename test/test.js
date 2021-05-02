@@ -200,11 +200,48 @@ describe('read_PositionWithPortID() is called with a string portID', () => {
     })
 });
 
-// read_PositionWithPortID() returns the last five vessel positions headed to a given port
-describe('read_PositionWithPortID() returns the last five vessel positions headed to a given port', () => {
+// read_PositionWithPortID() returns the last five vessel positions headed to a given port using port ID
+describe('read_PositionWithPortID() returns the last five vessel positions headed to a given port using port ID', () => {
     it('', async () => {
         var portID = "2966"
         const data = await dao.read_PositionWithPortID(portID)
 		assert.deepEqual("Documents returned: "+data, "Documents returned: "+5);
+    })
+});
+
+// read_PositionWithPortName() returns with the last five vessel positions headed to port using port name
+describe('read_PositionWithPortName() returns with the last five vessel positions headed to port using port name', () => {
+    it('', async function () {
+        var portName = "Assens"
+        const data = await dao.read_PositionWithPortName(portName, Country = null)
+		assert.deepEqual("Documents returned: "+data, "Documents returned: "+5);
+    })
+});
+
+// read_PositionWithPortName() returns with an array of all port documents in the country of Denmark
+describe('read_PositionWithPortName() returns with an array of all port documents in the country of Denmark', () => {
+    it('', async () => {
+        var Country = "Denmark"
+        const data = await dao.read_PositionWithPortName(portName = null, Country)
+		assert.deepEqual("Documents returned: "+data, "Documents returned: "+139);
+    })
+});
+
+// read_PositionWithPortName() returns with the last five vessel positions headed to port using port name and country
+describe('read_PositionWithPortName() returns with the last five vessel positions headed to port using port name and country', () => {
+    it('', async () => {
+        var portName = "Assens"
+		var Country = "Denmark"
+        const data = await dao.read_PositionWithPortName(portName,Country)
+		assert.deepEqual("Documents returned: "+data, "Documents returned: "+5);
+    })
+});
+
+// read_PositionWithPortName() returns a message that neither a port name or country was selected
+describe('read_PositionWithPortName() returns a message that neither a port name or country was selected', () => {
+    it('', async () => {
+        const message = await dao.read_PositionWithPortName()
+		console.log(message)
+		assert.deepEqual(message, "Neither a port name or country was selected.");
     })
 });
