@@ -31,10 +31,10 @@ function get_tile(scale, long, lat){
 
 exports.get_tile = get_tile
 
-export.SOUTH = SOUTH;
-export.NORTH = NORTH;
-export.WEST = WEST;
-export.EAST = EAST;
+exports.SOUTH = SOUTH;
+exports.NORTH = NORTH;
+exports.WEST = WEST;
+exports.EAST = EAST;
 
 
 

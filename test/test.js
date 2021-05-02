@@ -9,32 +9,59 @@ const sample_input = require('../data/sample_input.json')
 */
 
 /*
-* insert() is called either with an array or a single ais json doc
+* insert() is called either with an array of AIS json docs or a single ais json doc
 */ 
-// insert() can be called with an array of json ais docs
-describe('insert() called with an array of JSON AIS documents', () => {
+
+// insert() can be called with an array of json ais docs and adds the following
+describe('insert() called with array of JSON AIS docs inserts mapview properties to position report docs', () => {
     it('', async () => {
         const parameter = await dao.insert(sample_input, true)
-        assert.deepEqual(parameter, sample_input)
+        
+        // parameter[0] is the first AIS message in the array and is a position report 
+        assert.property(parameter[0], "mapview_1")
+        assert.property(parameter[0], "mapview_2")
+        assert.property(parameter[0], "mapview_3")
+    })
+});
+
+// insert() can be called with an array of json ais docs and adds properties corresponding
+// to the 3 tile ids for the three zoom levels (only for position reports)
+describe('insert() called with an array of JSON AIS documents does not add mapview properties to position report docs', () => {
+    it('', async () => {
+        const parameter = await dao.insert(sample_input, true)
+
+        var static_data = null
+        
+        // find the first static data object in the array of JSON AIS docs
+        for (elt in parameter) {
+            if (parameter[elt]["MsgType"] === "static_data") {
+                static_data = parameter[elt]
+                break
+            }
+        }
+        
+        assert.notProperty(static_data, "mapview_1")
+        assert.notProperty(static_data, "mapview_2")
+        assert.notProperty(static_data, "mapview_3")
     })
 });
 
 // insert() can be called with a single JSON AIS doc
-describe('insert() called with a single JSON AIS doc', () => {
+describe('insert() called with a single JSON AIS document', () => {
     it('', async () => {
         const parameter = await dao.insert({"Timestamp":"2020-11-18T00:00:00.000Z",
                                                     "Class":"Class A","MMSI":304858000,
                                                     "MsgType":"position_report",
-                                                    "Position": {"type":"Point","coordinates":[55.218332,13.371672]},
+                                                    "Position": {"type":"Point","coordinates":[55.218332, 13.371672]},
                                                     "Status":"Under way using engine","SoG":10.8,
                                                     "CoG":94.3,"Heading":97}, true)
                                                     
         assert.deepEqual(parameter, {"Timestamp":"2020-11-18T00:00:00.000Z",
                                             "Class":"Class A","MMSI":304858000,
                                             "MsgType":"position_report",
-                                            "Position": {"type":"Point","coordinates":[55.218332,13.371672]},
+                                            "Position": {"type":"Point","coordinates":[55.218332, 13.371672]},
                                             "Status":"Under way using engine","SoG":10.8,
-                                            "CoG":94.3,"Heading":97})
+                                            "CoG":94.3,"Heading":97, "mapview_1": null, "mapview_2": null, "mapview_3": null})
     })
 });
 
@@ -62,6 +89,77 @@ describe('insert() 1 sample AIS JSON docs into the mongo DB', () => {
 });
 
 
+// dao.get_tile() is called with proper parameter
+describe('dao.get_mapviews() is called with proper parameters', () => {
+    it('', async () => {
+        var lat = 51
+        var long = 13
+        const return_value = await dao.get_mapviews(long, lat, true)
+        assert.deepEqual(return_value, {'lat': 51, 'long': 13})
+    })
+});
+
+// call dao.get_tile() with latitude: 13.371... and longitude: 55.218... (out of bounds!)
+describe('dao.get_mapviews() called with lat: 13.371..., long: 55.218...', () => {
+    it('', async () => {
+        var lat = 55.218332
+        var long = 13.371672
+        const mapview_ids = await dao.get_mapviews(long, lat)
+        
+        assert.deepEqual(mapview_ids, {'mapview_1': null, 'mapview_2': null, 'mapview_3': null})
+    })
+});
+
+
+// call dao.get_tile with lat: 54.76 and long: 12.42 (in bounds)
+describe('call dao.get_mapviews() with lat: 54.76 and long: 12.42 (in bounds)', () => {
+    it('', async () => {
+        var lat = 54.763183
+        var long = 12.415067
+        const mapview_ids = await dao.get_mapviews(long, lat)
+        
+        assert.deepEqual(mapview_ids, {'mapview_1': 1, 'mapview_2': 5526, 'mapview_3': 55261})
+    })
+});
+
+
+// call dao.get_tile with lat: 55.00316, 12.809015 (in bounds)
+describe('call dao.get_mapviews() with lat: 55.00316 and long: 12.809015 (in bounds)', () => {
+    it('', async () => {
+        var lat = 55.00316
+        var long = 12.809015
+        const mapview_ids = await dao.get_mapviews(long, lat)
+        
+        assert.deepEqual(mapview_ids, {'mapview_1': 1, 'mapview_2': 5527, 'mapview_3': 55274})
+    })
+});
+
+
+describe('dao.isOutOfBounds() called with lat: 13.371..., long: 55.218...', () => {
+    it('', async () => {
+        var lat = 55.218332
+        var long = 13.371672
+        assert.equal(dao.isOutOfBounds(long, lat), true)
+    })
+});
+
+describe('dao.isOutOfBounds() called with lat: 13, long: 57.5 ', () => {
+    it('', async () => {
+        var lat = 57.5
+        var long = 13
+        assert.equal(dao.isOutOfBounds(long, lat), false)
+    })
+});
+
+describe('dao.isOutOfBounds() called with lat: 13.5, long: 57.5', () => {
+    it('', async () => {
+        var lat = 57.5
+        var long = 13.5
+        assert.equal(dao.isOutOfBounds(long, lat), true)
+    })
+});
+
+
 
 // read_position() is called with proper parameter
 describe('read_postition() is called with a 9 digit integer MMSI', () => {
@@ -78,8 +176,8 @@ describe('read_postition() returns a position doc in the correct format', () => 
         var MMSI = 265177000
         const position_report = await dao.read_position(MMSI)
         assert.property(position_report, "MMSI")
-        assert.property(position_report, "Lat")
-        assert.property(position_report, "Long")
+        assert.property(position_report, "lat")
+        assert.property(position_report, "long")
         assert.property(position_report, "IMO")
     })
 });
