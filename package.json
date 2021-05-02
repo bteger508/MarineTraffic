@@ -8,6 +8,6 @@
     "mocha": "^8.3.2"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "mocha --timeout 10000"
   }
 }

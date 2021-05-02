@@ -298,8 +298,8 @@ describe('read_PositionWithPortID() is called with a string portID', () => {
     })
 });
 
-// read_PositionWithPortID() returns the last five vessel positions headed to a given port
-describe('read_PositionWithPortID() returns the last five vessel positions headed to a given port', () => {
+// read_PositionWithPortID() returns the last five vessel positions headed to a given port using port ID
+describe('read_PositionWithPortID() returns the last five vessel positions headed to a given port using port ID', () => {
     it('', async () => {
         var portID = "2966"
         const data = await dao.read_PositionWithPortID(portID)
