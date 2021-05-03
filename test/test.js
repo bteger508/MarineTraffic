@@ -65,7 +65,6 @@ describe('insert() called with a single JSON AIS document', () => {
     })
 });
 
-
 // Unit test for insert() method using sample AIS json docs
 describe('insert() 500 sample AIS JSON docs into the mongo DB', () => {
     it('', async () => {
@@ -73,7 +72,6 @@ describe('insert() 500 sample AIS JSON docs into the mongo DB', () => {
         assert.deepEqual(response, {"Inserted": 500});
     })
 });
-
 
 // Unit test for insert() method using a single json AIS doc
 describe('insert() 1 sample AIS JSON docs into the mongo DB', () => {
@@ -87,7 +85,6 @@ describe('insert() 1 sample AIS JSON docs into the mongo DB', () => {
         assert.deepEqual(response, {"Inserted": 1});
     })
 });
-
 
 // dao.get_tile() is called with proper parameter
 describe('dao.get_mapviews() is called with proper parameters', () => {
@@ -110,7 +107,6 @@ describe('dao.get_mapviews() called with lat: 13.371..., long: 55.218...', () =>
     })
 });
 
-
 // call dao.get_tile with lat: 54.76 and long: 12.42 (in bounds)
 describe('call dao.get_mapviews() with lat: 54.76 and long: 12.42 (in bounds)', () => {
     it('', async () => {
@@ -122,7 +118,6 @@ describe('call dao.get_mapviews() with lat: 54.76 and long: 12.42 (in bounds)', 
     })
 });
 
-
 // call dao.get_tile with lat: 55.00316, 12.809015 (in bounds)
 describe('call dao.get_mapviews() with lat: 55.00316 and long: 12.809015 (in bounds)', () => {
     it('', async () => {
@@ -133,7 +128,6 @@ describe('call dao.get_mapviews() with lat: 55.00316 and long: 12.809015 (in bou
         assert.deepEqual(mapview_ids, {'mapview_1': 1, 'mapview_2': 5527, 'mapview_3': 55274})
     })
 });
-
 
 describe('dao.isOutOfBounds() called with lat: 13.371..., long: 55.218...', () => {
     it('', async () => {
@@ -159,8 +153,6 @@ describe('dao.isOutOfBounds() called with lat: 13.5, long: 57.5', () => {
     })
 });
 
-
-
 // read_position() is called with proper parameter
 describe('read_postition() is called with a 9 digit integer MMSI', () => {
     it('', async () => {
@@ -182,8 +174,6 @@ describe('read_postition() returns a position doc in the correct format', () => 
     })
 });
 
-
-
 // Unit test for delete_messages() method using sample AIS json docs
 describe('delete_messages() deletes 501 AIS messages older than 5 minutes', () => {
     it('', async () => {
@@ -192,8 +182,6 @@ describe('delete_messages() deletes 501 AIS messages older than 5 minutes', () =
 		assert.deepEqual( 'Deleted '+response.deletedCount+' item(s).', 'Deleted 501 item(s).');
     })
 });
-
-
 
 // permanent_data() is called with proper parameter
 describe('permanent_data() is called with a 9 digit integer MMSI', () => {
@@ -212,8 +200,6 @@ describe('permanent_data() returns a vessel doc in the correct format', () => {
         assert.deepEqual(data.MMSI, MMSI);
     })
 });
-
-
 
 // transient_data() is called with proper parameter
 describe('transient_data() is called with a 9 digit integer MMSI', () => {
@@ -341,5 +327,41 @@ describe('read_PositionWithPortName() returns a message that neither a port name
         const message = await dao.read_PositionWithPortName()
 		console.log(message)
 		assert.deepEqual(message, "Neither a port name or country was selected.");
+    })
+});
+
+// findTiles() is called with proper parameter
+describe('findTiles() is called with an int tileID', () => {
+    it('', async () => {
+        var tileID = 5237
+        const parameter = await dao.findTiles(tileID, true)
+        assert.strictEqual(parameter, tileID)
+    })
+});
+
+// findTiles() returns the 4 tiles of zoom level 2 related to a given tile ID
+describe('findTiles() returns the 4 tiles of zoom level 2 related to a given tile ID', () => {
+    it('', async () => {
+        var tileID = 5237
+        const data = await dao.findTiles(tileID)
+		assert.deepEqual("Documents returned: "+data, "Documents returned: "+4);
+    })
+});
+
+// findTiles() returns an error message if the tile ID given is in the wrong zoom level
+describe('findTiles() returns an error message if the tile ID given is in the wrong zoom level', () => {
+    it('', async () => {
+        var tileID = 52371
+        const data = await dao.findTiles(tileID)
+		assert.deepEqual(data, "The tile ID chosen is not in zoom level one.");
+    })
+});
+
+// findTiles() returns an error message if the tile ID given is null
+describe('findTiles() returns an error message if the tile ID given is null', () => {
+    it('', async () => {
+        var tileID = null;
+        const data = await dao.findTiles(tileID)
+		assert.deepEqual(data, "Choose a tile ID to find tiles.");
     })
 });
