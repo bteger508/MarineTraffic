@@ -34,6 +34,8 @@ This test verifies that get_mapviews() returns null values for each mapview id p
 #### call get_mapviews() with coordinates that are within the GUI map boundaries (lat: 54.76 and long: 12.42)
 This test verifies that get_mapviews successfully queries the mapview collections for id numbers. The id numbers returned by function should be the id numbers of the mapviews at each zoom level that encapsulate the coordinates.
 
+#### call get_mapviews() with coordinates that are within the GUI map boundaries (lat: 55.00316 and long: 12.809015)
+This test uses another set of valid coordinates to verify that get_mapviews successfully queries the mapview collections for id numbers. The id numbers returned by function should be the id numbers of the mapviews at each zoom level that encapsulate the coordinates.
 
 ### isOutOfBounds() Ben update - 3 tests 
 
