@@ -1,5 +1,6 @@
 # MarineTraffic
 Final project for CS 418
+
 By: Austin Hespe && Ben Eger
 
 To set up the project, add the MarineTraffic-main folder to your work directory. 
