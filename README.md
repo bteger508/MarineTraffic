@@ -17,7 +17,9 @@ Then, unzip the MarineTraffic-main folder to reveal all of the subfolders and fi
 |   4K | README.md            | README file that contains instructions     |
 
 ## Data subfolder:
-	Includes denmark_tiles subfolder.
+
+Includes denmark_tiles subfolder.
+	
 |  Size| File                            | Description                                                               | 
 |-----:|---------------------------------|---------------------------------------------------------------------------| 
 |  23M | aisdk_20201118_1000000.json.gz  | 1M messages, for read ops tests                                           |          
