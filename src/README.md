@@ -1,33 +1,47 @@
 # dao.js Script
 
-## insert() Ben update
+## insert()
 parameters: 
 - AIS JSON object or an array of AIS JSON objects,
-- An optional boolean parameter to run the function in stub mode for testing purposes.
+- Optional boolean flag to run the function in stub mode for testing purposes. 
 
 return value:
 - {"Inserted": count} where count is the number of documents successfully inserted into the database. If the insertion fails, the count should equal 0. 
 
 description:
-When insert() is called with an array of JSON AIS messages, the function inserts all of the documents with the insertMany() function provided by the Mongodb API.
- When insert() is called with a single JSON AIS message, the function uses insertOne() (also from mongodb API) to insert the document. 
+- When insert() is called with an array of JSON AIS messages, the function inserts all of the documents with the insertMany() function provided by the Mongodb API.
+- When insert() is called with a single JSON AIS message, the function uses insertOne() (also from mongodb API) to insert the document. 
+- When the insert() function inserts position reports, it adds the following properties to the position report objects: mapview_1, mapview_2, mapview_3. These properties map to the IDs of the each map view a ship is associated with at the time of the position report. 
+	- If the coordinates of the position report are outside of the GUI map, then each of the position report's mapview properties are set to null. 
 
 
-## get_mapviews() Ben update
+## get_mapviews()
 parameters:
+- Longitude (number)
+- Latitude (number)
+- Optional boolean flag to run the function in stub mode for testing purposes. 
 
 return value:
+- {'mapview_1': id_1, 'mapview_2': id_2, 'mapview_3': id_3}, where the three IDs correspond to the IDs of the mapviews at zoom levels 1,2 and 3 respectively that encapsulate the coordinates passed into get_mapviews(). If the query fails or the coordinates are outside of the bounds of the GUI map, then the IDs will be set to null.
 
 description:
+- get_mapviews() first checks to see if the coordinates lie within the boundaries of the GUI map. If not, get_mapviews() returns {'mapview_1': null, 'mapview_2': null, 'mapview_3': null}.
+- Otherwise, the function calculates the boundaries of the zoom level 3 tile that encapsulates the coordinates.
+- The function then attempts to query the 'mapviews' collection to find the ID of the zoom level 3 mapview that encapsulates the coordinates.
+- The function then returns the IDs as an object as described above.
 
-
-## isOutOfBounds() Ben update
+## isOutOfBounds()
 parameters:
+- Longitude (number)
+- Latitude (number)
 
 return value:
+- outOfBounds boolean:
+	- true => the coordinates are outside the bounds of the GUI map
+	- false => the coordinates lie within the bounds of the GUI map 
 
 description:
-
+- isOutOfBounds compares the coordinates passed as arguments against the boundaries of the GUI mapview. If the the coordinates are inside the GUI mapview, the function returns false; otherwise, the function returns true.
 
 ## read_position() Ben update
 parameters:
@@ -38,9 +52,9 @@ return value:
 - An object in the form of {"MMSI": ..., "lat": ..., "long": ..., "IMO": ...}
 
 description:
-read_position() first queries the ais_messages collection for the coordinates matching the MMSI provided.
- Then the function queries the ais_messages collection for an IMO number that corresponds to the given MMSI number.
- If the collection does not contain any static data that matches with the given MMSI, then the function queries the vessel collection to find a corresponding IMO. 
+- read_position() first queries the ais_messages collection for the coordinates matching the MMSI provided.
+- Then, the function queries the ais_messages collection for an IMO number that corresponds to the given MMSI number.
+- If the collection does not contain any static data that matches with the given MMSI, then the function queries the vessel collection to find a corresponding IMO. 
 
 
 ## delete_messages()
