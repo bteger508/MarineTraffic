@@ -23,7 +23,7 @@ This test verifies that insert() behaves as expected when an array of 500 JSON A
 This test verifies that insert() behaves as expected when a single JSON AIS document is passed to the function as an argument. The test asserts that the number of documents successfully inserted equals 1.
 
 
-### get_mapviews() Ben update - 4 tests
+### get_mapviews()
 
 #### get_mapviews() is called with latitude and longitude numbers in stub mode
 This test verifies that get_mapviews is called with two numbers: longitude and latitude. The return value should be an object describing the two numbers--in this case, {'lat': 51, 'long': 13}.
@@ -36,6 +36,7 @@ This test verifies that get_mapviews successfully queries the mapview collection
 
 #### call get_mapviews() with coordinates that are within the GUI map boundaries (lat: 55.00316 and long: 12.809015)
 This test uses another set of valid coordinates to verify that get_mapviews successfully queries the mapview collections for id numbers. The id numbers returned by function should be the id numbers of the mapviews at each zoom level that encapsulate the coordinates.
+
 
 ### isOutOfBounds() Ben update - 3 tests 
 
