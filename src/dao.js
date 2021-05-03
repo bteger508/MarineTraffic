@@ -1,6 +1,8 @@
 const MongoClient = require('mongodb').MongoClient;
 const assert = require('assert');
 const tile_map = require('./tile_map')
+const fs = require('fs');
+const path = require('path');
 
 // Connection URL
 const url = 'mongodb://localhost:27017';
@@ -418,6 +420,49 @@ exports.read_PositionWithPortID = async function(portID, stub = false){
 				return "The tile ID chosen is not in zoom level one.";
 			}
 			
+		}else{
+			return "Choose a tile ID to find tiles.";
+		}
+		
+	} finally {
+	    client.close()
+	}
+}
+
+
+ // Given a tile Id, get the actual tile (a PNG file)
+ exports.getPNG = async function(tileID, stub = false){
+	const client = new MongoClient('mongodb://localhost:27017', {useUnifiedTopology: true});
+	
+	// If function is called in stub mode, return the tileID passed as an argument
+	if (stub) { return tileID }
+	
+	// Else, execute the query
+	try {
+	    await client.connect();
+		
+		if( tileID != null ){
+			
+			// Creates the filename from given tileID in var filenameString
+			const mapviews = client.db(dbName).collection('mapviews')
+			var filename = await mapviews.find({"id":tileID}).project({"filename":1,"_id":0}).toArray();
+			var filename_Array = new Array();
+			for (x of filename){filename_Array.push(x.filename)};
+			var filenameString = filename_Array.toString();
+			
+			// Creates file PATH
+			var PATH = path.resolve('data','denmark_tiles',filenameString);
+			
+			// Reads PNG file and returns binary data
+			function encode(file) {
+				// read binary data
+				var bitmap = fs.readFileSync(file);
+				// converts binary into base64 for easy storage
+				var base64 = new Buffer(bitmap).toString('base64');
+				return (Array.from(base64)).length;
+			}
+			
+			return encode(PATH);
 		}else{
 			return "Choose a tile ID to find tiles.";
 		}
