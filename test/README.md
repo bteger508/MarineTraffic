@@ -5,13 +5,16 @@ This script uses the Assert API provided by the chai framework to test our DAO. 
 For our purposes, a function that supports stub mode will run as normal but without actually making sending any queries to the database. 
 
 
-### insert() Ben update - 5 tests
+### insert()
 
-#### insert() called with an array of JSON AIS documents
-This test verifies that insert() can be called with an array of 500 JSON AIS documents. In this case, insert() is called in stub mode, which simply returns the array of documents passed as an argument without any modifications. The test asserts that the array returned by the function matches the original array passed as an argument. (In future updates, insert() will be modified to associate AIS documents with GUI tiles at insertion time. Stub mode will also be updated to test that AIS documents are properly associated with GUI tiles.)
+#### insert() called with an array of JSON AIS documents inserts mapview properties to position report
+This test verifies that insert() can be called with an array of 500 JSON AIS documents. In this case, insert() is called in stub mode. This means that insert() returns the array of documents after 'mapview' properties have been added to position reports and the mapview collection has been queried for the appropriate mapview ID values. The test asserts that the array returned by the function contains the following IDs: 'mapview_1', 'mapview_2', and 'mapview_3'. 
+
+#### insert() called with an array of JSON AIS documents does not add mapview properties to static data docs
+This test asserts that the first static data document returned by insert() does not contain the mapview properties that should only be appended to position report objects. 
 
 #### insert() called with a single JSON AIS document
-This test verifies that insert() can be called with a single JSON AIS document passed into the function as an object. In this case, insert() is called in stub mode, which simply returns the object passed as an argument without any modifications. The test asserts that the object returned by the function matches the original object passed as an argument. (In future updates, insert() will be modified to associate AIS documents with GUI tiles at insertion time. Stub mode will also be updated to test that AIS documents are properly associated with GUI tiles.)
+This test verifies that insert() can be called with a single JSON AIS document passed into the function as an object. In this case, insert() is called in stub mode. We pass a position report object as the parameter. insert() should return the document after 'mapview' properties have been added to the position report and the mapview collection has been queried for the appropriate mapview ID values. The test asserts that the position report object returned by the function matches the original object but with the mapview properties appended. 
 
 #### insert() 500 sample AIS JSON docs into the mongo DB
 This test verifies that insert() behaves as expected when an array of 500 JSON AIS documents is passed to the function as an argument. The test asserts that the number of documents successfully inserted equals 500. 
@@ -20,11 +23,28 @@ This test verifies that insert() behaves as expected when an array of 500 JSON A
 This test verifies that insert() behaves as expected when a single JSON AIS document is passed to the function as an argument. The test asserts that the number of documents successfully inserted equals 1.
 
 
-### get_tile() Ben update - 4 tests
+### get_mapviews() Ben update - 4 tests
+
+#### get_mapviews() is called with latitude and longitude numbers in stub mode
+This test verifies that get_mapviews is called with two numbers: longitude and latitude. The return value should be an object describing the two numbers--in this case, {'lat': 51, 'long': 13}.
+
+#### get_mapviews() called with out of bounds coordinates (lat: 13.371..., long: 55.218...)
+This test verifies that get_mapviews() returns null values for each mapview id property when the coordinates are outside the boundaries of the GUI map. 
+
+#### call get_mapviews() with coordinates that are within the GUI map boundaries (lat: 54.76 and long: 12.42)
+This test verifies that get_mapviews successfully queries the mapview collections for id numbers. The id numbers returned by function should be the id numbers of the mapviews at each zoom level that encapsulate the coordinates.
 
 
 ### isOutOfBounds() Ben update - 3 tests 
 
+#### isOutOfBounds() called with latitude that exceeds GUI map boundaries (lat: 13.371..., long: 55.218...)
+This test asserts that isOutOfBounds() returns true when the latitude exceeds the GUI map boundaries. 
+
+#### isOutOfBounds() called with coordinates that are on the GUI map boundaries (lat: 13, long: 57.5)
+This test verifies that coordinates on the GUI map boundaries return false when passed into isOutOfBounds().
+
+#### isOutOfBounds() called with longitude that exceeds the GUI map boundaries (lat: 12, long: 58)
+This test verifies that isOutOfBounds() returns true when the longitude exceeds the GUI map boundaries. 
 
 ### read_postition()
 
