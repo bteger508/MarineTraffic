@@ -1,6 +1,5 @@
 # MarineTraffic
 Final project for CS 418
-
 By: Austin Hespe && Ben Eger
 
 To set up the project, add the MarineTraffic-main folder to your work directory. 
@@ -83,7 +82,7 @@ Contains all modules and dependencies for the project and a README.md file.
 
 6. Then, you may either delete the old .json.gz files or keep them as a back up.
 	
-7. Finally, use the following mongodb scripts to create a database.
+7. Next, use the following mongodb scripts to create a database.
 
 	~~~~~~~~~~~~~~{.bash}
      mongoimport --drop -d AISTestData -c vessels --maintainInsertionOrder vessels.json
@@ -110,4 +109,29 @@ Contains all modules and dependencies for the project and a README.md file.
 | mapviews       |
 | ports          | 
 | vessels        |
+
+10. Finally:
+
+	~~~~~~~~~~~~~~.(.bash)
+	exit
+	~~~~~~~~~~~~~~~~~~~
  
+## Run Test File
+ 
+1. Open cmd prompt or powershell.
+
+2. Use 'cd' to parse to your downloaded work folder 'MarineTraffic-main':
+
+	~~~~~~~~~~~~~~{.bash}
+	cd .\MarineTraffic-main\
+	~~~~~~~~~~~~~~~~~~~
+	
+3. Next, run npm test.
+
+	~~~~~~~~~~~~~~{.bash}
+	npm test
+	~~~~~~~~~~~~~~~~~~~
+	
+4. If all goes well, all tests should be passing!
+
+5. Finally, exit the program.
