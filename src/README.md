@@ -1,6 +1,6 @@
 # dao.js Script
 
-## insert()
+## insert() Ben update
 parameters: 
 - AIS JSON object or an array of AIS JSON objects,
 - An optional boolean parameter to run the function in stub mode for testing purposes.
@@ -13,7 +13,13 @@ description:
 When insert() is called with an array of JSON AIS messages, the function inserts all of the documents with the insertMany() function provided by the Mongodb API. When insert() is called with a single JSON AIS message, the function uses insertOne() (also from mongodb API) to insert the document. 
 
 
-## read_position()
+## get_mapviews() Ben update
+
+
+## isOutOfBounds() Ben update
+
+
+## read_position() Ben update
 parameters:
 - 9 digit integer MMSI of the ship whose position is being queried
 - An optional boolean flag to run the function in stub mode for testing purposes.
@@ -24,3 +30,35 @@ return value:
 description:
 
 read_position() first queries the ais_messages collection for the coordinates matching the MMSI provided. Then the function queries the ais_messages collection for an IMO number that corresponds to the given MMSI number. If the collection does not contain any static data that matches with the given MMSI, then the function queries the vessel collection to find a corresponding IMO. 
+
+
+## delete_messages() Austin
+
+
+## Permanent and Transient data
+
+### permanent_data() Austin
+
+
+### transient_data() Austin
+
+
+## read_ShipPositions() Austin
+
+
+## read_PortName() Austin
+
+
+## read_LastFivePositions() Austin
+
+
+## read_PositionWithPortID() Austin
+
+
+## read_PositionWithPortName() Austin
+
+
+## findTiles() Austin
+
+
+## getPNG() Austin 
