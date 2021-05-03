@@ -1,5 +1,7 @@
 # Installation
 
+** FOLLOW DIRECTIONS IF DATA IS NOT ALREADY INSTALLED **
+
 1. Check to see if data folder is as follows:
 
   ### Data subfolder:
