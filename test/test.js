@@ -325,7 +325,6 @@ describe('read_PositionWithPortName() returns with the last five vessel position
 describe('read_PositionWithPortName() returns a message that neither a port name or country was selected', () => {
     it('', async () => {
         const message = await dao.read_PositionWithPortName()
-		console.log(message)
 		assert.deepEqual(message, "Neither a port name or country was selected.");
     })
 });
@@ -362,6 +361,33 @@ describe('findTiles() returns an error message if the tile ID given is null', ()
     it('', async () => {
         var tileID = null;
         const data = await dao.findTiles(tileID)
+		assert.deepEqual(data, "Choose a tile ID to find tiles.");
+    })
+});
+
+// getPNG() is called with proper parameter
+describe('getPNG() is called with an int tileID', () => {
+    it('', async () => {
+        var tileID = 5237
+        const parameter = await dao.getPNG(tileID, true)
+        assert.strictEqual(parameter, tileID)
+    })
+});
+
+// getPNG() returns binary data of a PNG file from a given map tile ID
+describe('getPNG() returns binary data of a PNG file from a given map tile ID', () => {
+    it('', async () => {
+        var tileID = 5237;
+        const data = await dao.getPNG(tileID)
+		assert.deepEqual("Binary length: "+data, "Binary length: "+892444);
+    })
+});
+
+// getPNG() returns error message if tile ID is null
+describe('getPNG() getPNG() returns error message if tile ID is null', () => {
+    it('', async () => {
+        var tileID = null;
+        const data = await dao.getPNG(tileID)
 		assert.deepEqual(data, "Choose a tile ID to find tiles.");
     })
 });
