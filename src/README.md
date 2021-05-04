@@ -43,7 +43,7 @@ return value:
 description:
 - isOutOfBounds compares the coordinates passed as arguments against the boundaries of the GUI mapview. If the the coordinates are inside the GUI mapview, the function returns false; otherwise, the function returns true.
 
-## read_position() Ben update
+## read_position()
 parameters:
 - 9 digit integer MMSI of the ship whose position is being queried
 - An optional boolean flag to run the function in stub mode for testing purposes.
@@ -66,6 +66,17 @@ return value:
 
 description:
 This function first queries the mapviews collection to find the id of the mapview that matches the tile boundaries. Then the function queries ais_messages to find all of the position reports that have a matching mapview id value. 
+
+
+## read_positions_from_tile_and_port()
+parameters:
+- A port object in the form of {country: ..., port_location}
+
+return value:
+- A list of position report objects whose coordinates are within the zoom level 3 tile boundary corresponding to the port
+
+description:
+This function first queries the port collection to find the id of the level 3 mapview that matches the port. Then the function queries ais_messages to find all of the position reports that have a matching mapview id value. 
 
 
 ## delete_messages()
