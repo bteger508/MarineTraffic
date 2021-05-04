@@ -170,12 +170,23 @@ describe('read_postition() returns a position doc in the correct format', () => 
 
 
 
+describe('read_positions_from_tile() returns all position reports within the tile boundaries', () => {
+    it('', async () => {
+        var boundaries = {"west" : 10, "south" : 56, "east" : 11, "north" : 56.5}
+        const position_reports = await dao.read_positions_from_tile(boundaries)
+        console.log(position_reports)
+        assert.equal(position_reports.length, 8)
+    })
+});
+
+
+
 // Unit test for delete_messages() method using sample AIS json docs
 describe('delete_messages() deletes 501 AIS messages older than 5 minutes', () => {
     it('', async () => {
         const response = await dao.delete_messages();
         assert.isObject( response );
-		assert.deepEqual( 'Deleted '+response.deletedCount+' item(s).', 'Deleted 501 item(s).');
+        assert.deepEqual( 'Deleted '+response.deletedCount+' item(s).', 'Deleted 501 item(s).');
     })
 });
 

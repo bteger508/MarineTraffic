@@ -145,8 +145,38 @@ exports.read_position = async function(mmsi, stub = false){
 }
 
 
+// Retrieve position information for a given MMSI 
+exports.read_positions_from_tile = async function(tile, stub = false){
+	const client = new MongoClient('mongodb://localhost:27017', {useUnifiedTopology: true});
+	
+	// If function is called in stub mode, return the MMSI passed as an argument
+	if (stub) { return tile }
+	
+	// Else, query 'mapviews' for the id of the mapview corresponding to the tile
+    var mapview_number = null
+    var mapview_id = {}
+    try {
+	    await client.connect();
+         const mapviews = client.db(dbName).collection('mapviews')
+         var mapview = await mapviews.aggregate([{$match: tile}]).toArray()
+         
+         // create the mapview_id object in two steps
+         mapview_number = 'mapview_' + (mapview[0].scale)
+         mapview_id[mapview_number] = mapview[0].id
+         
+         const ais_docs = client.db(dbName).collection('ais_messages')
+         var position_reports = await ais_docs.aggregate([{$match: mapview_id}]).toArray()
+         return position_reports
+     } finally {
+	    client.close()
+	}
+}
+
+
+
+
 // Delete AIS Messages that are older than 5 minutes
-exports.delete_messages = async function(stub = false){
+async function delete_messages(stub = false){
 	const client = new MongoClient('mongodb://localhost:27017', {useUnifiedTopology: true});
 	
 	// Creating todays date in JSON format
@@ -474,3 +504,4 @@ exports.read_PositionWithPortID = async function(portID, stub = false){
 
 exports.get_mapviews = get_mapviews
 exports.isOutOfBounds = isOutOfBounds
+exports.delete_messages = delete_messages
