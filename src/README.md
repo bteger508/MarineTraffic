@@ -57,6 +57,17 @@ description:
 - If the collection does not contain any static data that matches with the given MMSI, then the function queries the vessel collection to find a corresponding IMO. 
 
 
+## read_positions_from_tile()
+parameters:
+- A tile boundary object in the form of {'north': ..., 'south': ..., 'east': ..., 'west': ...}
+
+return value:
+- A list of position report objects whose coordinates are within the tile boundary
+
+description:
+This function first queries the mapviews collection to find the id of the mapview that matches the tile boundaries. Then the function queries ais_messages to find all of the position reports that have a matching mapview id value. 
+
+
 ## delete_messages()
 parameters:
 - An optional boolean flag to run the function in stub mode for testing purposes.
