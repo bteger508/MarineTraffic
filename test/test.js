@@ -169,15 +169,43 @@ describe('read_postition() returns a position doc in the correct format', () => 
 
 
 
+describe('read_positions_from_tile() is called with a boundaries object', () => {
+    it('', async () => {
+        var boundaries = {"west" : 10, "south" : 56, "east" : 11, "north" : 56.5}
+        const position_reports = await dao.read_positions_from_tile(boundaries, true)
+        assert.equal(position_reports, boundaries)
+    })
+});
 
 describe('read_positions_from_tile() returns all position reports within the tile boundaries', () => {
     it('', async () => {
         var boundaries = {"west" : 10, "south" : 56, "east" : 11, "north" : 56.5}
         const position_reports = await dao.read_positions_from_tile(boundaries)
-        console.log(position_reports)
-        assert.equal(position_reports.length, 8)
+        assert.equal(position_reports.length, 5)
     })
 });
+
+
+
+describe('read_positions_from_tile_and_port() is called with country, port_location object', () => {
+    it('', async () => {
+        var port = {'country': "Denmark", "port_location" : "Frederikshavn"}
+        const position_reports = await dao.read_positions_from_tile_and_port(port, true)
+        
+        assert.equal(position_reports, port)
+    })
+});
+
+describe('test read_positions_from_tile_and_port() with country: "Denmark", port_location : "Frederikshavn"', () => {
+    it('', async () => {
+        var port = {'country': "Denmark", "port_location" : "Frederikshavn"}
+        const position_reports = await dao.read_positions_from_tile_and_port(port)
+        
+        // There should be 10 matching position reports
+        assert.equal(position_reports.length, 10)
+    })
+});
+
 
 
 

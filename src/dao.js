@@ -117,7 +117,7 @@ exports.read_position = async function(mmsi, stub = false){
 	// Else, execute the query
 	try {
 	    await client.connect();
-	    const ais_messages = client.db(dbName).collection('ais_messages')
+	    const ais_messages = client.db(dbName).collection('aisdk_20201118')
 	    let position = await ais_messages.aggregate([{$match: {"MMSI": mmsi}},
 	                    {$project: {_id:0, MMSI:1, "Position.coordinates": 1}},
 	                    {$sort: {Timestamp: -1}},
@@ -145,11 +145,11 @@ exports.read_position = async function(mmsi, stub = false){
 }
 
 
-// Retrieve position information for a given MMSI 
+// Get the most recent position reports corresponding to a tile in the form of {north: ..., south: ..., east: ..., west: ...}
 exports.read_positions_from_tile = async function(tile, stub = false){
 	const client = new MongoClient('mongodb://localhost:27017', {useUnifiedTopology: true});
 	
-	// If function is called in stub mode, return the MMSI passed as an argument
+	// If function is called in stub mode, return the tile passed as an argument
 	if (stub) { return tile }
 	
 	// Else, query 'mapviews' for the id of the mapview corresponding to the tile
@@ -161,9 +161,39 @@ exports.read_positions_from_tile = async function(tile, stub = false){
          var mapview = await mapviews.aggregate([{$match: tile}]).toArray()
          
          // create the mapview_id object in two steps
+         // mapview_id should be in the form of {mapview_#: id}
          mapview_number = 'mapview_' + (mapview[0].scale)
          mapview_id[mapview_number] = mapview[0].id
          
+         const ais_docs = client.db(dbName).collection('ais_messages')
+         
+         // use $sort: -1 to find the most recent AIS messages and limit to 5
+         var position_reports = await ais_docs.aggregate([{$match: mapview_id}, {$sort: {_id: -1}}, {$limit: 5}]).toArray()
+         return position_reports
+     } finally {
+	    client.close()
+	}
+}
+
+
+
+// Get all position reports corresponding to a port and its zoom level 3 tile :D
+// Parameter: port object in the form of {"country": ..., "port_location": ...,}
+exports.read_positions_from_tile_and_port = async function(port, stub = false){
+	const client = new MongoClient('mongodb://localhost:27017', {useUnifiedTopology: true});
+	
+	// If function is called in stub mode, return the tile passed as an argument
+	if (stub) { return port }
+	
+	// Else, query 'ports' for the port matching the port name and country
+    try {
+	    await client.connect();
+         const ports = client.db(dbName).collection('ports')
+         var port = await ports.aggregate([{$match: port}]).toArray()
+         
+         // extract the mapview id from the port object, which is the first (and only) element in the array
+         mapview_id = {"mapview_3": port[0].mapview_3}
+
          const ais_docs = client.db(dbName).collection('ais_messages')
          var position_reports = await ais_docs.aggregate([{$match: mapview_id}]).toArray()
          return position_reports
@@ -173,10 +203,8 @@ exports.read_positions_from_tile = async function(tile, stub = false){
 }
 
 
-
-
 // Delete AIS Messages that are older than 5 minutes
-async function delete_messages(stub = false){
+exports.delete_messages = async function(stub = false){
 	const client = new MongoClient('mongodb://localhost:27017', {useUnifiedTopology: true});
 	
 	// Creating todays date in JSON format
@@ -504,4 +532,3 @@ exports.read_PositionWithPortID = async function(portID, stub = false){
 
 exports.get_mapviews = get_mapviews
 exports.isOutOfBounds = isOutOfBounds
-exports.delete_messages = delete_messages
