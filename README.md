@@ -1,10 +1,12 @@
 # MarineTraffic
 Final project for CS 418
-By: Austin Hespe && Ben Eger
+By: Austin Hespe and Ben Eger
 
-To set up the project, add the MarineTraffic-main folder to your work directory. 
+*Special thanks to Professor Nicolas Renet for providing the AIS data files and
+tile_map.js, a small script for mapping coordinates to GUI map tiles.*
 
-Then, unzip the MarineTraffic-main folder to reveal all of the subfolders and files. 
+To set up the project, add the MarineTraffic-main folder to your work directory. Then, 
+unzip the MarineTraffic-main folder to reveal all of the subfolders and files. 
 
 
 ## Root Directiory 
